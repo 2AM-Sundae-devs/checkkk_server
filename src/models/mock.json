@@ -1,0 +1,73 @@
+[
+  {
+    "companyName": "Teo",
+    "position": "FE",
+    "situation": "면접",
+    "positionExperience": 3,
+    "companyAddress": "서울시 어쩌고",
+    "apply": {
+      "path": "원티드",
+      "day": "2023.06.23 ~ 2023.06.24",
+      "link": "https://wanted.com/Teo"
+    },
+    "personalOpinion": []
+  },
+  {
+    "companyName": "Seri",
+    "position": "FE",
+    "situation": "처우 협의",
+    "positionExperience": 2,
+    "companyAddress": "서울시 블라블라",
+    "apply": {
+      "path": "원티드",
+      "day": "2023.06.28",
+      "link": "https://wanted.com/Seri"
+    },
+    "personalOpinion": [
+      {
+        "type": "interview",
+        "content": "느낌이 좋아~~~"
+      }
+    ]
+  },
+  {
+    "companyName": "ABC",
+    "position": "FE",
+    "situation": "서류",
+    "positionExperience": 3,
+    "companyAddress": "경기도 어쩌고 저쩌고",
+    "apply": {
+      "path": "사람인",
+      "day": "2023.06.13",
+      "link": "https://wanted.com/ABC"
+    },
+    "personalOpinion": [
+      {
+        "type": "total",
+        "content": "ABC 초콜릿인가"
+      }
+    ]
+  },
+  {
+    "companyName": "삼삼오오",
+    "position": "BE",
+    "situation": "필기",
+    "positionExperience": 7,
+    "companyAddress": "재택근무~?~?",
+    "apply": {
+      "path": "랠릿",
+      "day": "2023.06.28",
+      "link": "https://wanted.com/3355"
+    },
+    "personalOpinion": [
+      {
+        "type": "interview",
+        "content": "느낌이 좋아~~~"
+      },
+      {
+        "type": "test",
+        "content": "코딩 테스트으~"
+      }
+    ]
+  }
+]
