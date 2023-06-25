@@ -1,4 +1,5 @@
 import express from 'express';
+import bcrypt from 'bcrypt';
 import { User } from '../../models/User';
 
 const router = express.Router();
@@ -7,18 +8,19 @@ export const loginRouter = router.post('/', async (req, res) => {
   console.log(req);
 
   try {
-    const { email, password } = req.body;
+    const { nickname, password } = req.body;
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ nickname });
     if (!user) {
       return res.status(400).json({ message: 'User does not exist' });
     }
 
-    if (password !== user.password) {
-      return res.status(401).json({ message: 'Invalid password' });
+    const validPassword = await bcrypt.compare(password, user.password);
+    if (!validPassword) {
+      return res.status(400).json({ message: 'Invalid password' });
     }
 
-    res.cookie('userId', user.id.toString(), { httpOnly: true });
+    res.cookie('userId', user._id.toString(), { httpOnly: true });
 
     res.status(200).json({ message: 'Login successful' });
   } catch (err) {
