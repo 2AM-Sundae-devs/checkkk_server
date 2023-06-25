@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const ApplicationSchema = new mongoose.Schema({
   companyName: { type: String, required: true },
@@ -14,4 +14,4 @@ const ApplicationSchema = new mongoose.Schema({
   personalOpinion: [Object],
 });
 
-export const Application = mongoose.model('Test', ApplicationSchema);
+export const Application = mongoose.model('Application', ApplicationSchema);

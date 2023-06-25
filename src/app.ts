@@ -1,6 +1,10 @@
 import express from 'express';
 import cors from 'cors';
-import { Test } from './models/testSchema';
+import { Application } from './models/Application';
+
+import chartRouter from './routes/chartRouter';
+import indexRouter from './routes';
+import detailRouter from './routes/DetailRouter';
 
 const app = express();
 
@@ -11,22 +15,27 @@ app.use(cors({ credentials: true }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.get('/', (req, res) => {
+app.use('/', indexRouter);
+app.use('charts', chartRouter);
+app.use('/details', detailRouter);
+
+// app.get('/', (req, res) => {
+// const appli = new Application({
+//   position: 'Front End Developer',
+//   companyName: '원티드',
+//   situation: 'Before',
+//   positionExperience: 0,
+//   companyAddress: '광화문',
+//   apply: {},
+// });
+
+// res.send('<h1>Hello World!</h1>');
+// });
+
+app.use((req, res, next) => {
   console.log(req);
 
-  const red = new Test({
-    color: 'red',
-    size: 'Large',
-  });
-
-  try {
-    red.save();
-    console.log(red);
-  } catch (error) {
-    console.error(error);
-  }
-
-  res.send('<h1>Hello World!</h1>');
+  res.status(404).send('Not Found');
 });
 
 app.listen(app.get('PORT'), () => {

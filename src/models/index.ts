@@ -1,11 +1,12 @@
 import mongoose from 'mongoose';
+import dotenv from 'dotenv';
 
-require('dotenv').config();
+dotenv.config();
 
-const MONGO_URL = process.env;
+const MONGO_URL = process.env.MONGO_URI || '';
 
 mongoose
-  .connect(process.env.MONGO_URI || '', {
+  .connect(MONGO_URL, {
     autoIndex: true,
   })
   .then(() => {
