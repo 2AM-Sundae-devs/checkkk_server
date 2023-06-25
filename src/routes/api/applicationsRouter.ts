@@ -1,28 +1,9 @@
 import express from 'express';
 
 import { Application } from '../../models/Application';
+import { createResponseApplication } from '../../utils/application';
 
 const router = express.Router();
-
-const createResponseApplication = ({
-  id,
-  situation,
-  companyAddress,
-  positionExperience,
-  companyName,
-  apply,
-  personalOpinion,
-  position,
-}: any) => ({
-  index: id,
-  companyName,
-  position,
-  situation,
-  positionExperience,
-  companyAddress,
-  apply,
-  personalOpinion,
-});
 
 router.get('/', async (req, res) => {
   try {
@@ -46,24 +27,30 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.post('/', (req, res) => {
-  console.log(req);
+router.post('/', async (req, res) => {
+  const {
+    companyName,
+    position,
+    situation,
+    positionExperience,
+    companyAddress,
+    apply,
+    personalOpinion,
+  } = req.body;
 
   try {
     const newApplication = new Application({
-      companyName: 'Teo',
-      position: 'FE',
-      situation: '면접',
-      positionExperience: 3,
-      companyAddress: '서울시 어쩌고',
-      apply: {
-        path: '원티드',
-        day: '2023.06.23 ~ 2023.06.24',
-        link: 'https://wanted.com/Teo',
-      },
+      companyName,
+      position,
+      situation,
+      positionExperience,
+      companyAddress,
+      apply,
+      personalOpinion,
     });
 
-    newApplication.save();
+    await newApplication.save();
+
     res.status(201).json({
       err: 'N',
       message: 'new application successfully saved!',
