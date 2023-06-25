@@ -8,8 +8,14 @@ router.post('/', async (req, res) => {
   try {
     const { nickname, password } = req.body;
 
+    if (!nickname) {
+      return res.status(400).json({ message: 'nickname is required' });
+    }
+    if (!password) {
+      return res.status(400).json({ message: 'Password is required' });
+    }
+
     const existingUser = await User.findOne({ nickname });
-    console.log(existingUser);
 
     if (existingUser) {
       return res.status(409).json({ message: 'Email already exists' });
@@ -29,9 +35,7 @@ router.post('/', async (req, res) => {
     });
     await newUser.save();
 
-    console.log(newUser);
-
-    // res.cookie('userId', newUser._id.toString(), { httpOnly: true });
+    res.cookie('userId', newUser._id.toString(), { httpOnly: true });
 
     res.status(201).json({ message: 'login success' });
   } catch (err) {

@@ -5,8 +5,6 @@ import { User } from '../../models/User';
 const router = express.Router();
 
 export const loginRouter = router.post('/', async (req, res) => {
-  console.log(req);
-
   try {
     const { nickname, password } = req.body;
 
@@ -14,11 +12,11 @@ export const loginRouter = router.post('/', async (req, res) => {
     if (!user) {
       return res.status(400).json({ message: 'User does not exist' });
     }
+    const validPassword = await bcrypt.compare(password, user.password);
 
-    // const validPassword = await bcrypt.compare(password, user.password);
-    // if (!validPassword) {
-    //   return res.status(400).json({ message: 'Invalid password' });
-    // }
+    if (!validPassword) {
+      return res.status(400).json({ message: 'Invalid password' });
+    }
 
     // res.cookie('userId', user._id.toString(), { httpOnly: true });
 
