@@ -8,10 +8,9 @@ dotenv.config();
 
 import { homeRouter } from './routes';
 import { detailRouter } from './routes/api/DetailRouter';
-import { chartRouter } from './routes/api/chartRouter';
-// import { loginRouter } from './routes/api/LoginRouter';
-// import { apiRouter } from './routes/api/api';
-// import signupRouter from './routes/api/SignupRouter';
+import chartRouter from './routes/api/chartRouter';
+import { loginRouter } from './routes/api/LoginRouter';
+import signupRouter from './routes/api/SignupRouter';
 import applicationsRouter from './routes/api/applicationsRouter';
 
 const app = express();
@@ -25,12 +24,11 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use('/', homeRouter);
-// app.use('/api', apiRouter);
 app.use('/charts', chartRouter);
 app.use('/applications', applicationsRouter);
 app.use('/details', detailRouter);
-// app.use('/signUp', signupRouter);
-// app.use('/login', loginRouter);
+app.use('/signUp', signupRouter);
+app.use('/login', loginRouter);
 
 const MONGO_URL = process.env.MONGO_URI || '';
 
