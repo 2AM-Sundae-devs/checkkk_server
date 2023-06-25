@@ -18,11 +18,9 @@ export const loginRouter = router.post('/', async (req, res) => {
       return res.status(400).json({ message: 'Invalid password' });
     }
 
-    // res.cookie('userId', user._id.toString(), { httpOnly: true });
-
+    res.cookie('userId', user._id.toString(), { httpOnly: true });
     res.status(200).json({ message: 'Login successful' });
   } catch (err) {
-    console.log('login err : ', err);
     res.status(500).json({ message: 'something went wrong' });
   }
 });
