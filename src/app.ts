@@ -2,9 +2,9 @@ import express from 'express';
 import cors from 'cors';
 import { Application } from './models/Application';
 
-import chartRouter from './routes/chartRouter';
 import indexRouter from './routes';
 import detailRouter from './routes/DetailRouter';
+import { chartRouter } from './routes/chartRouter';
 
 const app = express();
 
@@ -16,7 +16,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.use('/', indexRouter);
-app.use('charts', chartRouter);
+app.use('/charts', chartRouter);
 app.use('/details', detailRouter);
 
 // app.get('/', (req, res) => {

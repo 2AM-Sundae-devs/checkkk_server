@@ -2,8 +2,6 @@ import express from 'express';
 
 const router = express.Router();
 
-router.get('/charts', (req, res) => {
-  console.log(res.send('Hello, user'));
+export const chartRouter = router.get('/', (req, res) => {
+  res.status(200).json('Hello, user');
 });
-
-export default router;
