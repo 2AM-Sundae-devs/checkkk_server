@@ -1,6 +1,10 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const UserSchema = new mongoose.Schema({
+  id: {
+    type: mongoose.Schema.Types.ObjectId,
+    auto: true,
+  },
   email: {
     type: String,
     required: true,
