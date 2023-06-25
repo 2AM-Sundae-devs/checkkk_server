@@ -6,7 +6,8 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
   try {
-    const applications = await Application.find();
+    const applications: Application[] = await Application.find();
+    console.log('applications', applications);
 
     if (!applications.length) {
       res.status(404).json({
@@ -29,6 +30,9 @@ router.get('/', async (req, res) => {
     const PASS_DOCS = '서류 통과';
     const PASS_FINIAL = '최종 합격';
     const NO_PASS = '불합격';
+
+    const platformConversionStats: any[] =
+      generatePlatformConversionStats(applications);
 
     res.status(200).json({
       counts: [
@@ -66,11 +70,76 @@ router.get('/', async (req, res) => {
             application.situation !== '지원 완료',
         ).length,
       },
+      platformConversionStats,
     });
   } catch (error) {
     console.error(error);
     res.json(error);
   }
 });
+
+interface Application {
+  index: string;
+  companyName: string;
+  position: string;
+  situation: string;
+  positionExperience: number;
+  companyAddress: string;
+  apply: {
+    path: string;
+    day: string;
+    link: string;
+  };
+  personalOpinion: any[];
+}
+
+interface PlatformConversionStats {
+  id: number;
+  platform: string;
+  appliedCount: number;
+  responseCount: number;
+  responseRate: string;
+}
+
+function generatePlatformConversionStats(applications: Application[]): any[] {
+  const platformAppliedCount: Record<string, number> = {};
+  const platformResponseCount: Record<string, number> = {};
+
+  applications.forEach((application) => {
+    const platform = application.apply.path;
+    if (platform in platformAppliedCount) {
+      platformAppliedCount[platform]++;
+    } else {
+      platformAppliedCount[platform] = 1;
+    }
+
+    if (application.situation === '서류 통과') {
+      if (platform in platformResponseCount) {
+        platformResponseCount[platform]++;
+      } else {
+        platformResponseCount[platform] = 1;
+      }
+    }
+  });
+
+  const platformConversionStats: PlatformConversionStats[] = [];
+
+  for (const platform in platformAppliedCount) {
+    const appliedCount = platformAppliedCount[platform] || 0;
+    const responseCount = platformResponseCount[platform] || 0;
+    const responseRate =
+      appliedCount > 0 ? (responseCount / appliedCount) * 100 : 0;
+
+    platformConversionStats.push({
+      id: platformConversionStats.length + 1,
+      platform,
+      appliedCount,
+      responseCount,
+      responseRate: responseRate.toFixed(2),
+    });
+  }
+
+  return platformConversionStats;
+}
 
 export default router;
