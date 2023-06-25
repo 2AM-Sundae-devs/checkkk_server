@@ -4,21 +4,25 @@ import { User } from '../models/User';
 const router = express.Router();
 
 router.post('/login', async (req, res) => {
-  const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-  const existingUser = await User.findOne({ email });
-  if (existingUser) {
-    return res.status(400).json({ message: 'Email already exists' });
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: 'User does not exist' });
+    }
+
+    if (password !== user.password) {
+      return res.status(401).json({ message: 'Invalid password' });
+    }
+
+    res.cookie('userId', user.id.toString(), { httpOnly: true });
+
+    res.status(200).json({ message: 'Login successful' });
+  } catch (err) {
+    console.log('login err : ', err);
+    res.status(500).json({ message: 'something went wrong' });
   }
-
-  const newUser = new User({
-    email,
-    password,
-  });
-
-  await newUser.save();
-
-  res.status(201).json({ message: 'login success' });
 });
 
 export default router;

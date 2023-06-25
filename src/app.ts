@@ -1,10 +1,12 @@
 import express from 'express';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import { Application } from './models/Application';
 
 import indexRouter from './routes';
 import detailRouter from './routes/DetailRouter';
 import { chartRouter } from './routes/chartRouter';
+import signupRouter from './routes/SignupRouter';
 import loginRouter from './routes/LoginRouter';
 
 const app = express();
@@ -15,10 +17,12 @@ app.use(express.static('public'));
 app.use(cors({ credentials: true }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(cookieParser());
 
 app.use('/', indexRouter);
 app.use('/charts', chartRouter);
 app.use('/details', detailRouter);
+app.use('/signUp', signupRouter);
 app.use('/login', loginRouter);
 
 // app.get('/', (req, res) => {
