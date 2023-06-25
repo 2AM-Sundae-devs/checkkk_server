@@ -1,7 +1,28 @@
 import express from 'express';
+
 import { Application } from '../../models/Application';
 
 const router = express.Router();
+
+const createResponseApplication = ({
+  id,
+  situation,
+  companyAddress,
+  positionExperience,
+  companyName,
+  apply,
+  personalOpinion,
+  position,
+}: any) => ({
+  index: id,
+  companyName,
+  position,
+  situation,
+  positionExperience,
+  companyAddress,
+  apply,
+  personalOpinion,
+});
 
 router.get('/', async (req, res) => {
   try {
@@ -16,27 +37,7 @@ router.get('/', async (req, res) => {
 
     res.status(200).json({
       err: 'N',
-      applications: applications.map(
-        ({
-          id,
-          situation,
-          companyAddress,
-          positionExperience,
-          companyName,
-          apply,
-          personalOpinion,
-          position,
-        }) => ({
-          id,
-          companyName,
-          position,
-          situation,
-          positionExperience,
-          companyAddress,
-          apply,
-          personalOpinion,
-        }),
-      ),
+      applications: applications.map(createResponseApplication),
     });
   } catch (error) {
     console.error(error);
@@ -72,6 +73,25 @@ router.post('/', (req, res) => {
       err: 'Y',
     });
   }
+});
+
+router.get('/:applicationId', async (req, res) => {
+  const applicationId = req.params.applicationId;
+  console.log(applicationId);
+
+  const application = await Application.findById(applicationId);
+
+  if (!application) {
+    res.status(404).json({
+      err: 'Y',
+      errMessage: '찾는 이력서가 없습니다.',
+    });
+  }
+
+  res.status(200).json({
+    err: 'N',
+    application: createResponseApplication(application),
+  });
 });
 
 export default router;
