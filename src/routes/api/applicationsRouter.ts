@@ -7,8 +7,14 @@ const router = express.Router();
 
 const getApplications = async (req: any, res: any) => {
   try {
-    // 사용자와 연동해서 불러와야 함
+    // const { userId } = req.cookies.userId;
+
+    // if (!userId) {
+    //   return res.status(401).json({ message: 'No user ID cookie found' });
+    // }
+
     const applications = await Application.find();
+    // const applications = await Application.findById(userId);
 
     if (!applications.length) {
       res.status(404).json({
