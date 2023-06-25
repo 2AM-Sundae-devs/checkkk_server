@@ -24,7 +24,7 @@ const createResponseApplication = ({
   personalOpinion,
 });
 
-router.get('/', async (req, res) => {
+const getApplications = async (req: any, res: any) => {
   try {
     // 사용자와 연동해서 불러와야 함
     const applications = await Application.find();
@@ -44,13 +44,13 @@ router.get('/', async (req, res) => {
     console.error(error);
     res.json(error);
   }
-});
+};
 
-router.post('/', (req, res) => {
+const createApplication = async (req: any, res: any) => {
   console.log(req);
 
   try {
-    const newApplication = new Application({
+    const newApplication = await new Application({
       companyName: 'Teo',
       position: 'FE',
       situation: '면접',
@@ -74,33 +74,37 @@ router.post('/', (req, res) => {
       err: 'Y',
     });
   }
-});
+};
 
-router.get('/:applicationId', async (req, res) => {
+const getApplication = async (req: any, res: any) => {
   const applicationId = req.params.applicationId;
-  console.log(applicationId);
+  // console.log(applicationId);
 
-  const application = await Application.findById(applicationId);
+  try {
+    const application = await Application.findById(applicationId);
 
-  if (!application) {
-    res.status(404).json({
+    if (!application) {
+      res.status(404).json({
+        err: 'Y',
+        errMessage: '찾는 이력서가 없습니다.',
+      });
+    }
+
+    res.status(200).json({
+      err: 'N',
+      application: createResponseApplication(application),
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({
       err: 'Y',
-      errMessage: '찾는 이력서가 없습니다.',
     });
   }
+};
 
-  res.status(200).json({
-    err: 'N',
-    application: createResponseApplication(application),
-  });
-});
-
-router.patch('/:applicationId', async (req, res) => {
+const patchApplication = async (req: any, res: any) => {
   const { applicationId } = req.params;
   const applicationPatch = req.body;
-  // console.log('applicationId::::', applicationId);
-  // console.log('applicationPatch::::', applicationPatch);
-  // console.log('body::::', req.body);
 
   try {
     const application = await Application.findById(applicationId);
@@ -125,9 +129,9 @@ router.patch('/:applicationId', async (req, res) => {
   } catch (err) {
     console.log('임시 router.patch', err);
   }
-});
+};
 
-router.delete('/:applicationId', async (req, res) => {
+const deleteApplication = async (req: any, res: any) => {
   const { applicationId } = req.params;
 
   try {
@@ -150,6 +154,13 @@ router.delete('/:applicationId', async (req, res) => {
   } catch (err) {
     console.log('임시 router.patch', err);
   }
-});
+};
+
+router.route('/').get(getApplications).post(createApplication);
+router
+  .route('/:applicationId')
+  .get(getApplication)
+  .patch(patchApplication)
+  .delete(deleteApplication);
 
 export default router;
