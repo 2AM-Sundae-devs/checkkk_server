@@ -89,6 +89,10 @@ function generatePlatformConversionStats(applications: IApplication[]): {
     });
   }
 
+  platformConversionStats.sort(
+    (a, b) => parseFloat(b.responseRate) - parseFloat(a.responseRate),
+  );
+
   const applicationStats = Object.keys(statusCounts).map((status) => {
     return {
       countOf: status,
