@@ -15,14 +15,20 @@ router.get('/', async (req, res) => {
       });
     }
 
-    console.log(applications.map(createResponseApplication));
+    const applyPath = new Set(
+      applications.map((application) => application.apply?.path),
+    );
+
+    console.log(
+      Array.from(applyPath).map((path) =>
+        applications.filter((application) => application.apply?.path === path),
+      ),
+    );
 
     const APPLY_COMPLETE = '지원 완료';
     const PASS_DOCS = '서류 통과';
     const PASS_FINIAL = '최종 합격';
     const NO_PASS = '불합격';
-
-    console.log(applications.filter((a) => a.situation === APPLY_COMPLETE));
 
     res.status(200).json({
       counts: [
@@ -49,6 +55,17 @@ router.get('/', async (req, res) => {
             .length,
         },
       ],
+      conversions: {
+        지원수: applications.filter(
+          (application) => application.apply?.path === '원티드',
+        ).length,
+        전환수: applications.filter(
+          (application) =>
+            application.apply?.path === '원티드' &&
+            application.situation !== '불합격' &&
+            application.situation !== '지원 완료',
+        ).length,
+      },
     });
   } catch (error) {
     console.error(error);
