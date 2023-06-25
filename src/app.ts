@@ -5,6 +5,7 @@ import { Application } from './models/Application';
 import indexRouter from './routes';
 import detailRouter from './routes/DetailRouter';
 import { chartRouter } from './routes/chartRouter';
+import loginRouter from './routes/LoginRouter';
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use(express.json());
 app.use('/', indexRouter);
 app.use('/charts', chartRouter);
 app.use('/details', detailRouter);
+app.use('/login', loginRouter);
 
 // app.get('/', (req, res) => {
 // const appli = new Application({
