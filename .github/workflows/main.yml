@@ -17,7 +17,7 @@ jobs:
       # Runs a single command using the runners shell
       - name: Clean temp directory
         run: |
-          rm -rf ./*
+          rm -rf /home/runner/work/checkkk_server
           cp -r $GITHUB_WORKSPACE .
 
       - name: archive drcloud
