@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
@@ -11,7 +12,7 @@ import { chartRouter } from './routes/api/chartRouter';
 import { loginRouter } from './routes/api/LoginRouter';
 import { apiRouter } from './routes/api/api';
 import signupRouter from './routes/api/SignupRouter';
-import mongoose from 'mongoose';
+import applicationsRouter from './routes/api/applicationsRouter';
 
 const app = express();
 
@@ -26,6 +27,7 @@ app.use(cookieParser());
 app.use('/', homeRouter);
 app.use('/api', apiRouter);
 app.use('/charts', chartRouter);
+app.use('/applications', applicationsRouter);
 app.use('/details', detailRouter);
 app.use('/signUp', signupRouter);
 app.use('/login', loginRouter);
