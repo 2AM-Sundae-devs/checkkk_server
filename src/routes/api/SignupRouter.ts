@@ -15,19 +15,23 @@ router.post('/', async (req, res) => {
       return res.status(409).json({ message: 'Email already exists' });
     }
 
-    const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hash(password, salt);
+    // const salt = await bcrypt.genSalt();
+    // const hashedPassword = await bcrypt.hash(password, salt);
+
+    // const newUser = new User({
+    //   nickname,
+    //   password: hashedPassword,
+    // });
 
     const newUser = new User({
       nickname,
-      password: hashedPassword,
+      password,
     });
-
     await newUser.save();
 
     console.log(newUser);
 
-    res.cookie('userId', newUser._id.toString(), { httpOnly: true });
+    // res.cookie('userId', newUser._id.toString(), { httpOnly: true });
 
     res.status(201).json({ message: 'login success' });
   } catch (err) {

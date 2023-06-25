@@ -15,12 +15,12 @@ export const loginRouter = router.post('/', async (req, res) => {
       return res.status(400).json({ message: 'User does not exist' });
     }
 
-    const validPassword = await bcrypt.compare(password, user.password);
-    if (!validPassword) {
-      return res.status(400).json({ message: 'Invalid password' });
-    }
+    // const validPassword = await bcrypt.compare(password, user.password);
+    // if (!validPassword) {
+    //   return res.status(400).json({ message: 'Invalid password' });
+    // }
 
-    res.cookie('userId', user._id.toString(), { httpOnly: true });
+    // res.cookie('userId', user._id.toString(), { httpOnly: true });
 
     res.status(200).json({ message: 'Login successful' });
   } catch (err) {
