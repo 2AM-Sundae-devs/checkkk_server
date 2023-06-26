@@ -11,7 +11,7 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
   try {
-    const userId = req.cookies?.userId;
+    const userId = req.cookies?.userId || req.headers?.authorization;
 
     if (!userId) {
       return res
@@ -25,7 +25,7 @@ router.get('/', async (req, res) => {
     }
 
     const applicationsByUser: IApplication[] = await Application.find({
-      userId: userId,
+      userId,
     });
 
     if (!applicationsByUser) {

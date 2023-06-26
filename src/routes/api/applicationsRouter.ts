@@ -8,7 +8,7 @@ const router = express.Router();
 
 const getApplications = async (req: Request, res: Response) => {
   try {
-    const userId = req.cookies?.userId;
+    const userId = req.cookies?.userId || req.headers?.authorization;
 
     if (!userId) {
       return res
@@ -48,7 +48,7 @@ const createApplication = async (req: Request, res: Response) => {
     personalOpinion,
   } = req.body;
 
-  const userId = req.cookies?.userId;
+  const userId = req.cookies?.userId || req.headers?.authorization;
 
   if (!userId) {
     return res
@@ -87,7 +87,7 @@ const createApplication = async (req: Request, res: Response) => {
 };
 
 const getApplication = async (req: Request, res: Response) => {
-  const userId = req.cookies?.userId;
+  const userId = req.cookies?.userId || req.headers?.authorization;
   if (!userId)
     return res
       .status(401)
@@ -126,7 +126,7 @@ const getApplication = async (req: Request, res: Response) => {
 const patchApplication = async (req: Request, res: Response) => {
   const applicationId = req.params?.applicationId;
   const applicationPatch = req.body;
-  const userId = req.cookies?.userId;
+  const userId = req.cookies?.userId || req.headers?.authorization;
 
   if (!userId)
     return res
@@ -166,7 +166,7 @@ const patchApplication = async (req: Request, res: Response) => {
 
 const deleteApplication = async (req: Request, res: Response) => {
   const applicationId = req.params?.applicationId;
-  const userId = req.cookies?.userId;
+  const userId = req.cookies?.userId || req.headers?.authorization;
 
   if (!userId)
     return res

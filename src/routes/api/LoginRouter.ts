@@ -35,12 +35,11 @@ export const loginRouter = router.post('/', async (req, res) => {
         );
     }
 
-    // res.cookie('userId', user._id.toString(), {
-    //   httpOnly: false,
-    //   sameSite: 'none',
-    //   secure: true,
-    //   path: '/',
-    // });
+    res.cookie('userId', user.id.toString(), {
+      httpOnly: true,
+      sameSite: 'lax',
+      path: '/',
+    });
 
     res.status(200).json({
       ...setResponse('N', '로그인 성공!'),
