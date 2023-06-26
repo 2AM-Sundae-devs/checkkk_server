@@ -17,7 +17,15 @@ const app = express();
 
 app.use(cookieParser());
 app.use(express.json());
-app.use(cors({ credentials: true }));
+app.use(
+  cors({
+    credentials: true,
+    origin: (req) => {
+      if (req === 'http://localhost:3000') return 'http://localhost:3000';
+      return 'www.checkkk.com';
+    },
+  }),
+);
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 
