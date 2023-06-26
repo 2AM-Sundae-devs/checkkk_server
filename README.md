@@ -21,11 +21,11 @@
 <br/>
 
 <div style="text-align: center;">
-      <img src="../checkkk_server/src/public/teo.png">
+      <img src="./public/teo.png">
       <div style="display:flex;justify-content:center">
-        <img src='../checkkk_server/src/public/teo2.jpg' style="width:200px;height:350px;margin:20px" />
-         <img src='../checkkk_server/src/public/teo4.jpeg' style="width:300px;height:350px;margin:20px" />
-        <img src='../checkkk_server/src/public/teo3.jpeg'  style="width:200px;height:350px;margin:20px" />
+        <img src='./public/teo2.jpg' style="width:200px;height:350px;margin:20px" />
+         <img src='./public/teo4.jpeg' style="width:300px;height:350px;margin:20px" />
+        <img src='./public/teo3.jpeg'  style="width:200px;height:350px;margin:20px" />
       </div>
 </div>
 
