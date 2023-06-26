@@ -7,6 +7,8 @@ import { setResponse } from '../../@types/response';
 const router = express.Router();
 
 export const loginRouter = router.post('/', async (req, res) => {
+  console.log(req);
+
   try {
     const { nickname, password } = req.body;
 
