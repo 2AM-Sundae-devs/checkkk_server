@@ -26,7 +26,6 @@ export const loginRouter = router.post('/', async (req, res) => {
     const hashedPassword = bcrypt.hashSync(password, salt);
     const isPasswordValid = bcrypt.compareSync(password, hashedPassword);
 
-
     if (!isPasswordValid) {
       return res
         .status(400)
@@ -38,7 +37,7 @@ export const loginRouter = router.post('/', async (req, res) => {
         );
     }
 
-    res.cookie('userId', user._id.toString(), { httpOnly: true });
+    res.cookie('userId', user._id.toString(), { httpOnly: false });
     res.status(200).json(setResponse('N', '로그인 성공!'));
   } catch (err) {
     console.error(err, 'login err');
