@@ -41,6 +41,7 @@ router.post('/', async (req, res) => {
     await newUser.save();
 
     res.cookie('userId', newUser._id.toString(), {
+      httpOnly: true,
       sameSite: 'lax',
       path: '/',
     });
