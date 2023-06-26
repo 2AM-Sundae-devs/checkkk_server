@@ -126,6 +126,17 @@ const getApplication = async (req: Request, res: Response) => {
 const patchApplication = async (req: Request, res: Response) => {
   const applicationId = req.params?.applicationId;
   const applicationPatch = req.body;
+  const userId = req.cookies?.userId;
+
+  if (!userId)
+    return res
+      .status(401)
+      .json(
+        setResponse(
+          'Y',
+          '로그인이 필요한 서비스입니다. 로그인 후 이용해주세요 :)',
+        ),
+      );
 
   try {
     const application = await Application.findById(applicationId);
@@ -155,9 +166,20 @@ const patchApplication = async (req: Request, res: Response) => {
 
 const deleteApplication = async (req: Request, res: Response) => {
   const applicationId = req.params?.applicationId;
+  const userId = req.cookies?.userId;
+
+  if (!userId)
+    return res
+      .status(401)
+      .json(
+        setResponse(
+          'Y',
+          '로그인이 필요한 서비스입니다. 로그인 후 이용해주세요 :)',
+        ),
+      );
 
   try {
-    const application = await Application.findById(applicationId);
+    const application = await Application.findByIdAndRemove(applicationId);
 
     if (!application) {
       return res.status(404).json({
@@ -166,15 +188,10 @@ const deleteApplication = async (req: Request, res: Response) => {
       });
     }
 
-    await Application.deleteOne({ _id: applicationId });
-
-    // res.sendStatus(204);
-    res.status(204).json({
-      err: 'N',
-      message: '삭제 완료!',
-    });
+    res.status(204).end();
   } catch (err) {
-    console.log('임시 router.patch', err);
+    console.error(err, 'at deleteApplication');
+    res.status(500).json(setResponse('Y', err?.toString()));
   }
 };
 

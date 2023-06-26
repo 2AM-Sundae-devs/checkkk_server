@@ -22,9 +22,7 @@ export const loginRouter = router.post('/', async (req, res) => {
         );
     }
 
-    const salt = bcrypt.genSaltSync(9);
-    const hashedPassword = bcrypt.hashSync(password, salt);
-    const isPasswordValid = bcrypt.compareSync(password, hashedPassword);
+    const isPasswordValid = bcrypt.compareSync(password, user.password);
 
     if (!isPasswordValid) {
       return res
