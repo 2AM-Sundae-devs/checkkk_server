@@ -15,8 +15,6 @@ import applicationsRouter from './routes/api/applicationsRouter';
 
 const app = express();
 
-app.use(cookieParser());
-app.use(express.json());
 app.use(
   cors({
     credentials: true,
@@ -28,6 +26,9 @@ app.use(
     },
   }),
 );
+
+app.use(cookieParser());
+app.use(express.json());
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 
