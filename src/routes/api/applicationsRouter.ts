@@ -1,39 +1,43 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 
 import { Application } from '../../models/Application';
 import { createResponseApplication } from '../../utils/application';
+import { setResponse } from '../../@types/response';
 
 const router = express.Router();
 
-const getApplications = async (req: any, res: any) => {
+const getApplications = async (req: Request, res: Response) => {
   try {
-    // const { userId } = req.cookies.userId;
+    const userId = req.cookies?.userId;
 
-    // if (!userId) {
-    //   return res.status(401).json({ message: 'No user ID cookie found' });
-    // }
-
-    const applications = await Application.find();
-    // const applications = await Application.findById(userId);
-
-    if (!applications.length) {
-      res.status(404).json({
-        err: 'N',
-        errMessage: '등록된 이력서가 없습니다!',
-      });
+    if (!userId) {
+      return res
+        .status(401)
+        .json(
+          setResponse(
+            'Y',
+            '로그인이 필요한 서비스입니다. 로그인 후 이용해주세요 :)',
+          ),
+        );
     }
+
+    const applicationsByUser = await Application.find({
+      userId,
+    });
 
     res.status(200).json({
       err: 'N',
-      applications: applications.map(createResponseApplication),
+      applications: applicationsByUser?.map(createResponseApplication) || [],
     });
   } catch (error) {
-    console.error(error);
-    res.json(error);
+    console.error(error, 'at getApplications');
+    res
+      .status(500)
+      .json(setResponse('Y', '서버 예외처리 에러입니다. 서버에 문의해주세요!'));
   }
 };
 
-const createApplication = async (req: any, res: any) => {
+const createApplication = async (req: Request, res: Response) => {
   const {
     companyName,
     position,
@@ -44,8 +48,22 @@ const createApplication = async (req: any, res: any) => {
     personalOpinion,
   } = req.body;
 
+  const userId = req.cookies?.userId;
+
+  if (!userId) {
+    return res
+      .status(401)
+      .json(
+        setResponse(
+          'Y',
+          '로그인이 필요한 서비스입니다. 로그인 후 이용해주세요 :)',
+        ),
+      );
+  }
+
   try {
-    const newApplication = await new Application({
+    const newApplication = new Application({
+      userId,
       companyName,
       position,
       situation,
@@ -58,27 +76,37 @@ const createApplication = async (req: any, res: any) => {
     newApplication.save();
     res.status(201).json({
       err: 'N',
-      message: 'new application successfully saved!',
     });
   } catch (error) {
     console.error(error);
     res.status(400).json({
       err: 'Y',
+      errorMessage: error?.toString(),
     });
   }
 };
 
-const getApplication = async (req: any, res: any) => {
-  const applicationId = req.params.applicationId;
-  // console.log(applicationId);
+const getApplication = async (req: Request, res: Response) => {
+  const userId = req.cookies?.userId;
+  if (!userId)
+    return res
+      .status(401)
+      .json(
+        setResponse(
+          'Y',
+          '로그인이 필요한 서비스입니다. 로그인 후 이용해주세요 :)',
+        ),
+      );
+
+  const applicationId = req.params?.applicationId;
 
   try {
     const application = await Application.findById(applicationId);
 
     if (!application) {
-      res.status(404).json({
+      return res.status(404).json({
         err: 'Y',
-        errMessage: '찾는 이력서가 없습니다.',
+        errMessage: '등록되지 않은 이력서입니다.',
       });
     }
 
@@ -88,14 +116,15 @@ const getApplication = async (req: any, res: any) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(400).json({
+    res.status(500).json({
       err: 'Y',
+      errorMessage: error?.toString(),
     });
   }
 };
 
-const patchApplication = async (req: any, res: any) => {
-  const { applicationId } = req.params;
+const patchApplication = async (req: Request, res: Response) => {
+  const applicationId = req.params?.applicationId;
   const applicationPatch = req.body;
 
   try {
@@ -108,23 +137,24 @@ const patchApplication = async (req: any, res: any) => {
       });
     }
 
-    await Application.findOneAndUpdate(
+    const updatedApplication = await Application.findOneAndUpdate(
       { _id: applicationId },
       applicationPatch,
+      { new: true },
     );
 
-    // res.sendStatus(200);
     res.status(200).json({
       err: 'N',
-      message: '수정 성공!',
+      message: createResponseApplication(updatedApplication),
     });
   } catch (err) {
-    console.log('임시 router.patch', err);
+    console.error(err, 'at patchApplication');
+    res.status(500).json(setResponse('Y', err?.toString()));
   }
 };
 
-const deleteApplication = async (req: any, res: any) => {
-  const { applicationId } = req.params;
+const deleteApplication = async (req: Request, res: Response) => {
+  const applicationId = req.params?.applicationId;
 
   try {
     const application = await Application.findById(applicationId);

@@ -1,6 +1,6 @@
 export type IsError = 'Y' | 'N';
 
-export const setResponse = (isError: IsError, message: string) => {
+export const setResponse = (isError: IsError, message?: string) => {
   if (isError === 'Y') {
     return setErrorResponse(message);
   }
