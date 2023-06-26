@@ -4,7 +4,7 @@
   "description": "project checkkk for server",
   "main": "index.js",
   "scripts": {
-    "dev": "yarn build && nodemon --watch 'src/**/*.ts' src/app.ts",
+    "dev": "nodemon --watch 'src/**/*.ts' src/app.ts",
     "build": "npx tsc",
     "start": "yarn build && node dist/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
