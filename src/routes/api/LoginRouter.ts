@@ -39,7 +39,8 @@ export const loginRouter = router.post('/', async (req, res) => {
       .status(200)
       .cookie('userId', user.id.toString(), {
         httpOnly: true,
-        sameSite: 'lax',
+        sameSite: 'none',
+        secure: true,
         path: '/',
       })
       .json({
