@@ -18,7 +18,7 @@ const app = express();
 app.use(
   cors({
     credentials: true,
-    origin: 'www.checkkk.com',
+    origin: 'http://checkkk.com',
   }),
 );
 
