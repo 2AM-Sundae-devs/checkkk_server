@@ -1,13 +1,23 @@
+import type { IApplication } from '../../types/application';
+import type {
+  IPlatformConversionStats,
+  IApplicationStats,
+} from '../../types/chart';
 import express from 'express';
 import { Application } from '../../models/Application';
-import { createResponseApplication } from '../../utils/application';
 
 const router = express.Router();
 
 router.get('/', async (req, res) => {
   try {
-    const applications: Application[] = await Application.find();
-    console.log('applications', applications);
+    // const { userId } = req.cookies.userId;
+
+    // if (!userId) {
+    //   return res.status(401).json({ message: 'No user ID cookie found' });
+    // }
+
+    const applications: IApplication[] = await Application.find();
+    // const applications: IApplication[] = await Application.findById(userId);
 
     if (!applications.length) {
       res.status(404).json({
@@ -16,61 +26,12 @@ router.get('/', async (req, res) => {
       });
     }
 
-    const applyPath = new Set(
-      applications.map((application) => application.apply?.path),
-    );
-
-    console.log(
-      Array.from(applyPath).map((path) =>
-        applications.filter((application) => application.apply?.path === path),
-      ),
-    );
-
-    const APPLY_COMPLETE = '지원 완료';
-    const PASS_DOCS = '서류 통과';
-    const PASS_FINIAL = '최종 합격';
-    const NO_PASS = '불합격';
-
-    const platformConversionStats: any[] =
+    const { applicationStats, platformStats } =
       generatePlatformConversionStats(applications);
 
     res.status(200).json({
-      counts: [
-        {
-          countOf: APPLY_COMPLETE,
-          count: applications.filter(
-            ({ situation }) => situation === APPLY_COMPLETE,
-          ).length,
-        },
-        {
-          countOf: PASS_DOCS,
-          count: applications.filter(({ situation }) => situation === PASS_DOCS)
-            .length,
-        },
-        {
-          countOf: PASS_FINIAL,
-          count: applications.filter(
-            ({ situation }) => situation === PASS_FINIAL,
-          ).length,
-        },
-        {
-          countOf: NO_PASS,
-          count: applications.filter(({ situation }) => situation === NO_PASS)
-            .length,
-        },
-      ],
-      conversions: {
-        지원수: applications.filter(
-          (application) => application.apply?.path === '원티드',
-        ).length,
-        전환수: applications.filter(
-          (application) =>
-            application.apply?.path === '원티드' &&
-            application.situation !== '불합격' &&
-            application.situation !== '지원 완료',
-        ).length,
-      },
-      platformConversionStats,
+      applicationStats,
+      platformStats,
     });
   } catch (error) {
     console.error(error);
@@ -78,51 +39,40 @@ router.get('/', async (req, res) => {
   }
 });
 
-interface Application {
-  index: string;
-  companyName: string;
-  position: string;
-  situation: string;
-  positionExperience: number;
-  companyAddress: string;
-  apply: {
-    path: string;
-    day: string;
-    link: string;
-  };
-  personalOpinion: any[];
-}
-
-interface PlatformConversionStats {
-  id: number;
-  platform: string;
-  appliedCount: number;
-  responseCount: number;
-  responseRate: string;
-}
-
-function generatePlatformConversionStats(applications: Application[]): any[] {
+function generatePlatformConversionStats(applications: IApplication[]): {
+  platformStats: IPlatformConversionStats[];
+  applicationStats: IApplicationStats[];
+} {
   const platformAppliedCount: Record<string, number> = {};
   const platformResponseCount: Record<string, number> = {};
+  const statusCounts: Record<string, number> = {};
 
   applications.forEach((application) => {
     const platform = application.apply.path;
+    const situation = application.situation;
+
     if (platform in platformAppliedCount) {
       platformAppliedCount[platform]++;
     } else {
       platformAppliedCount[platform] = 1;
     }
 
-    if (application.situation === '서류 통과') {
+    if (situation === '서류 통과') {
       if (platform in platformResponseCount) {
         platformResponseCount[platform]++;
       } else {
         platformResponseCount[platform] = 1;
       }
     }
+
+    if (situation in statusCounts) {
+      statusCounts[situation]++;
+    } else {
+      statusCounts[situation] = 1;
+    }
   });
 
-  const platformConversionStats: PlatformConversionStats[] = [];
+  const platformConversionStats: IPlatformConversionStats[] = [];
 
   for (const platform in platformAppliedCount) {
     const appliedCount = platformAppliedCount[platform] || 0;
@@ -139,7 +89,18 @@ function generatePlatformConversionStats(applications: Application[]): any[] {
     });
   }
 
-  return platformConversionStats;
+  platformConversionStats.sort(
+    (a, b) => parseFloat(b.responseRate) - parseFloat(a.responseRate),
+  );
+
+  const applicationStats = Object.keys(statusCounts).map((status) => {
+    return {
+      countOf: status,
+      count: statusCounts[status],
+    };
+  });
+
+  return { applicationStats, platformStats: platformConversionStats };
 }
 
 export default router;

@@ -26,6 +26,7 @@ export const loginRouter = router.post('/', async (req, res) => {
     const hashedPassword = bcrypt.hashSync(password, salt);
     const isPasswordValid = bcrypt.compareSync(password, hashedPassword);
 
+
     if (!isPasswordValid) {
       return res
         .status(400)

@@ -36,6 +36,7 @@ router.post('/', async (req, res) => {
       nickname,
       password: hashedPassword,
     });
+
     await newUser.save();
 
     res.cookie('userId', newUser._id.toString(), { httpOnly: true });
