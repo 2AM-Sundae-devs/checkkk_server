@@ -20,7 +20,9 @@ app.use(express.json());
 app.use(
   cors({
     credentials: true,
-    origin: (req) => {
+    origin: (req, b) => {
+      console.log(req, b);
+
       if (req === 'http://localhost:3000') return 'http://localhost:3000';
       return 'www.checkkk.com';
     },
