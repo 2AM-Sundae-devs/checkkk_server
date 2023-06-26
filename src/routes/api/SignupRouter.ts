@@ -40,14 +40,17 @@ router.post('/', async (req, res) => {
 
     await newUser.save();
 
-    res.cookie('userId', newUser._id.toString(), {
-      httpOnly: false,
-      sameSite: 'none',
-      secure: true,
-      path: '/',
-    });
+    // res.cookie('userId', newUser._id.toString(), {
+    //   httpOnly: false,
+    //   sameSite: 'none',
+    //   secure: true,
+    //   path: '/',
+    // });
 
-    res.status(201).json(setResponse('N', '회원가입 완료!'));
+    res.status(201).json({
+      ...setResponse('N', '회원가입 완료!'),
+      authorization: newUser.id.toString(),
+    });
   } catch (err) {
     console.log(err, 'at signUp');
     res
