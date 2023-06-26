@@ -41,8 +41,9 @@ router.post('/', async (req, res) => {
     await newUser.save();
 
     res.cookie('userId', newUser._id.toString(), {
-      httpOnly: false,
-      sameSite: 'none',
+      sameSite: 'lax',
+      secure: true,
+      path: '/',
     });
 
     res.status(201).json(setResponse('N', '회원가입 완료!'));
