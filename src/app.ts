@@ -15,13 +15,13 @@ import applicationsRouter from './routes/api/applicationsRouter';
 
 const app = express();
 
-app.set('PORT', process.env.PORT || 8080);
-
-app.use(express.static('public'));
-app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
 app.use(cookieParser());
+app.use(express.json());
+app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
+app.use(express.static('public'));
+app.use(express.urlencoded({ extended: true }));
+
+app.set('PORT', process.env.PORT || 8080);
 
 app.use('/', homeRouter);
 app.use('/charts', chartRouter);
