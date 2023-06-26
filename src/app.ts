@@ -18,12 +18,7 @@ const app = express();
 app.use(
   cors({
     credentials: true,
-    origin: (req, b) => {
-      console.log(req, b);
-
-      if (req === 'http://localhost:3000') return 'http://localhost:3000';
-      return 'www.checkkk.com';
-    },
+    origin: 'https://www.checkkk.com',
   }),
 );
 
