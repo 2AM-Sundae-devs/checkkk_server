@@ -42,7 +42,6 @@ router.post('/', async (req, res) => {
 
     res.cookie('userId', newUser._id.toString(), {
       sameSite: 'lax',
-      secure: true,
       path: '/',
     });
 

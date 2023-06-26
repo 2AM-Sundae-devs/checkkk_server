@@ -37,7 +37,6 @@ export const loginRouter = router.post('/', async (req, res) => {
 
     res.cookie('userId', user._id.toString(), {
       sameSite: 'lax',
-      secure: true,
       path: '/',
     });
     res.status(200).json(setResponse('N', '로그인 성공!'));
