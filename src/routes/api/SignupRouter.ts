@@ -40,7 +40,10 @@ router.post('/', async (req, res) => {
 
     await newUser.save();
 
-    res.cookie('userId', newUser._id.toString(), { httpOnly: true });
+    res.cookie('userId', newUser._id.toString(), {
+      httpOnly: false,
+      sameSite: 'none',
+    });
 
     res.status(201).json(setResponse('N', '회원가입 완료!'));
   } catch (err) {
