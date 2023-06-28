@@ -24,26 +24,30 @@ router.get('/', async (req, res) => {
         );
     }
 
-    const applicationsByUser: IApplication[] = await Application.find({
-      userId,
-    });
+    const applications: IApplication[] = await Application.find({ userId });
 
-    if (!applicationsByUser) {
-      return res.status(200).json({
-        err: 'N',
-        errMessage: '등록된 이력서가 없습니다!',
-        applicationStats: [],
-        platformStats: [],
-      });
-    }
+    // const endDate = new Date();
+    // endDate.setHours(23, 59, 59, 999);
+
+    // const startDate = new Date();
+    // startDate.setDate(startDate.getDate() - 7);
+    // startDate.setHours(0, 0, 0, 0);
+    // const applicationsByRecentWeek = await Application.find({
+    //   'apply.day': {
+    //     $gte: startDate,
+    //     $lte: endDate,
+    //   },
+    //   userId,
+    // });
 
     const { applicationStats, platformStats } =
-      generatePlatformConversionStats(applicationsByUser);
+      getConversionStatsByPlatform(applications);
+    // const dateStats = getConversionStatsByDate(applicationsByRecentWeek);
 
     res.status(200).json({
-      err: 'N',
       applicationStats,
       platformStats,
+      // dateStats,
     });
   } catch (error) {
     console.error(error, 'at charRouter');
@@ -51,7 +55,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-function generatePlatformConversionStats(applications: IApplication[]): {
+function getConversionStatsByPlatform(applications: IApplication[]): {
   platformStats: IPlatformConversionStats[];
   applicationStats: IApplicationStats[];
 } {
@@ -113,6 +117,51 @@ function generatePlatformConversionStats(applications: IApplication[]): {
   });
 
   return { applicationStats, platformStats: platformConversionStats };
+}
+
+function getConversionStatsByDate(applicationsByRecentWeek: any) {
+  const dailyAppliedCount: Record<string, number> = {};
+  const dailyResponseCount: Record<string, number> = {};
+
+  applicationsByRecentWeek.forEach((application: any) => {
+    const day = application.apply.day.toISOString().split('T')[0];
+    const situation = application.situation;
+
+    if (day in dailyAppliedCount) {
+      dailyAppliedCount[day]++;
+    } else {
+      dailyAppliedCount[day] = 1;
+    }
+
+    if (situation === '서류 통과') {
+      if (day in dailyResponseCount) {
+        dailyResponseCount[day]++;
+      } else {
+        dailyResponseCount[day] = 1;
+      }
+    }
+  });
+
+  const dateConversionStats = [];
+
+  for (const day in dailyAppliedCount) {
+    const appliedCount = dailyAppliedCount[day] || 0;
+    const responseCount = dailyResponseCount[day] || 0;
+    const responseRate =
+      appliedCount > 0 ? (responseCount / appliedCount) * 100 : 0;
+
+    dateConversionStats.push({
+      date: day,
+      responseCount,
+      responseRate: responseRate.toFixed(2),
+    });
+  }
+
+  dateConversionStats.sort(
+    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+  );
+
+  return dateConversionStats;
 }
 
 export default router;
